@@ -1,165 +1,481 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>트러플 증권소</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
-      font-family: 'Arial';
-      background-color: #fffbe6;
-      padding: 20px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 20px;
+      background: linear-gradient(135deg, #f8f4e3, #f0d9a7);
+      color: #333;
     }
-    .hidden { display: none; }
-    .btn { padding: 8px 16px; background-color: #ffde59; border: none; border-radius: 8px; cursor: pointer; margin: 5px; }
-    .btn:hover { background-color: #ffd633; }
+    h1, h3, h4 {
+      color: #2a2a2a;
+      font-weight: 700;
+    }
+    button {
+      background-color: #f4a261;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      color: white;
+      font-weight: 600;
+      box-shadow: 0 4px 8px rgba(244, 162, 97, 0.4);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    button:hover {
+      background-color: #e76f51;
+      box-shadow: 0 6px 12px rgba(231, 111, 81, 0.6);
+    }
+    input, select {
+      padding: 8px;
+      margin: 6px 4px;
+      border: 1.5px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: border-color 0.3s ease;
+    }
+    input:focus, select:focus {
+      border-color: #f4a261;
+      outline: none;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      border-bottom: 1px solid #ddd;
+      padding: 12px 10px;
+      text-align: center;
+    }
+    th {
+      background-color: #264653;
+      color: white;
+      font-weight: 700;
+    }
+    tbody tr:hover {
+      background-color: #fce5c7;
+      cursor: default;
+    }
+    #adminSection {
+      display: none;
+      border: 1px solid #ccc;
+      padding: 15px;
+      background: #fff9e6;
+      border-radius: 10px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+      margin-top: 20px;
+    }
+    #loanSection {
+      margin-top: 20px;
+      border: 1px solid #ccc;
+      padding: 15px;
+      background: #fff9e6;
+      border-radius: 10px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    }
+    #loanRequestsTable th {
+      background-color: #2a9d8f;
+    }
   </style>
 </head>
 <body>
-  <h1>📈 트러플 증권소</h1>
 
-  <!-- 로그인 화면 -->
-  <div id="login-screen">
-    <input type="text" id="login-id" placeholder="ID 입력">
-    <input type="password" id="login-password" placeholder="비밀번호 (관리자만)">
-    <button class="btn" onclick="login()">로그인</button>
+  <h1>트러플 증권소</h1>
+
+  <div id="loginSection">
+    <h3>로그인</h3>
+    <input type="text" id="userIdInput" placeholder="아이디 입력" />
+    <button onclick="login()">로그인</button>
+    <p><small>관리자 ID: wjdwogus / 일반 사용자 ID: 5118</small></p>
   </div>
 
-  <!-- 사용자 화면 -->
-  <div id="user-screen" class="hidden">
-    <h2>환영합니다, <span id="username"></span>님!</h2>
-    <p>💰 잔액: <span id="balance">0</span>서창</p>
+  <div id="mainSection" style="display:none;">
+    <h3>잔액: <span id="balanceDisplay">0</span> 서창</h3>
 
     <div>
-      <h3>📦 주식 매수/매도</h3>
-      <select id="stock-select"></select>
-      <input type="number" id="stock-amount" placeholder="수량">
-      <button class="btn" onclick="buyStock()">매수</button>
-      <button class="btn" onclick="sellStock()">매도</button>
+      <h4>주식 목록</h4>
+      <table id="stockTable">
+        <thead>
+          <tr><th>회사명</th><th>현재가</th><th>거래량</th><th>매수</th><th>매도</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
     </div>
 
     <div>
-      <h3>📊 내 주식 현황</h3>
-      <ul id="my-stocks"></ul>
+      <h4>내 주식 현황</h4>
+      <table id="myStockTable">
+        <thead>
+          <tr><th>회사명</th><th>보유 수량</th><th>평가 금액</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
     </div>
 
     <div>
-      <h3>📈 주가 그래프</h3>
-      <canvas id="stock-chart"></canvas>
+      <h4>주가 변동 그래프</h4>
+      <canvas id="priceChart" width="600" height="300"></canvas>
     </div>
-  </div>
 
-  <!-- 관리자 화면 -->
-  <div id="admin-screen" class="hidden">
-    <h2>🔐 관리자 모드</h2>
-    <input type="text" id="user-id" placeholder="유저 ID">
-    <input type="number" id="amount" placeholder="충전할 서창">
-    <button class="btn" onclick="chargeBalance()">서창 충전</button>
+    <div id="loanSection">
+      <h4>대출 신청</h4>
+      <p>이자: 1주일에 5%</p>
+      <input type="number" id="loanAmountInput" placeholder="대출 금액 입력" min="1" />
+      <button onclick="requestLoan()">대출 신청</button>
+      <h5>대출 신청 내역</h5>
+      <table id="loanRequestsTable">
+        <thead><tr><th>사용자</th><th>금액</th><th>상태</th><th>관리자 승인</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div id="adminSection">
+      <h3>관리자 메뉴</h3>
+      <div>
+        <h4>회사 상장</h4>
+        <input type="text" id="newCompanyName" placeholder="회사명 입력" />
+        <button onclick="addCompany()">상장</button>
+      </div>
+      <div style="margin-top:10px;">
+        <h4>회사 폐지</h4>
+        <select id="removeCompanySelect"></select>
+        <button onclick="removeCompany()">폐지</button>
+      </div>
+      <div style="margin-top:20px;">
+        <button onclick="logout()">로그아웃</button>
+      </div>
+    </div>
+
+    <div style="margin-top:20px;">
+      <button onclick="logout()">로그아웃</button>
+    </div>
+
   </div>
 
 <script>
-  const stocks = {
-    '당근유성': { price: 12, history: [12] },
-    '트러플마켓': { price: 8, history: [8] },
-    '서준머니': { price: 9.5, history: [9.5] },
-    '트러플아지매': { price: 5, history: [5] },
-    '샘숭전자': { price: 13, history: [13] },
-    '아뽀': { price: 7, history: [7] },
+  // --- 초기 데이터 ---
+  let companies = ['(주) 당근유성', '(주) 서준머니', 'IG전자', '에메존', '(주) 샘숭전자', '(주) 아뽀'];
+  let stocks = {}; // 회사별 { price, history[], volume }
+  let users = {
+    'wjdwogus': { password:'', role:'admin', balance: 1000000, stocks: {}, loans: [] },
+    '5118': { password:'', role:'user', balance: 50000, stocks: {}, loans: [] }
   };
+  let currentUserId = null;
+  let priceChart = null;
 
-  const users = {
-    '5118': { balance: 0, stocks: {} }
-  };
-
-  let currentUser = null;
-
-  function login() {
-    const id = document.getElementById('login-id').value;
-    const pw = document.getElementById('login-password').value;
-
-    if (id === 'wjdwogus' && pw === 'wjdwogus') {
-      document.getElementById('login-screen').classList.add('hidden');
-      document.getElementById('admin-screen').classList.remove('hidden');
-      currentUser = 'ADMIN';
-    } else {
-      if (!users[id]) users[id] = { balance: 0, stocks: {} };
-      currentUser = id;
-      document.getElementById('username').innerText = id;
-      document.getElementById('login-screen').classList.add('hidden');
-      document.getElementById('user-screen').classList.remove('hidden');
-      updateUI();
-    }
-  }
-
-  function updateUI() {
-    document.getElementById('balance').innerText = users[currentUser].balance.toFixed(1);
-    const select = document.getElementById('stock-select');
-    select.innerHTML = '';
-    for (let name in stocks) {
-      select.innerHTML += `<option value="${name}">${name} (${stocks[name].price}서창)</option>`;
-    }
-    const ul = document.getElementById('my-stocks');
-    ul.innerHTML = '';
-    const my = users[currentUser].stocks;
-    for (let s in stocks) {
-      const count = my[s] || 0;
-      if (count > 0) {
-        ul.innerHTML += `<li>${s}: ${count}주</li>`;
-      }
-    }
-    drawChart();
-  }
-
-  function buyStock() {
-    const name = document.getElementById('stock-select').value;
-    const qty = parseInt(document.getElementById('stock-amount').value);
-    const price = stocks[name].price;
-    const total = price * qty;
-    if (users[currentUser].balance >= total) {
-      users[currentUser].balance -= total;
-      users[currentUser].stocks[name] = (users[currentUser].stocks[name] || 0) + qty;
-      updateUI();
-    } else {
-      alert('잔액 부족!');
-    }
-  }
-
-  function sellStock() {
-    const name = document.getElementById('stock-select').value;
-    const qty = parseInt(document.getElementById('stock-amount').value);
-    const price = stocks[name].price;
-    const myQty = users[currentUser].stocks[name] || 0;
-    if (myQty >= qty) {
-      users[currentUser].stocks[name] -= qty;
-      users[currentUser].balance += price * qty;
-      updateUI();
-    } else {
-      alert('보유 주식 부족!');
-    }
-  }
-
-  function chargeBalance() {
-    const id = document.getElementById('user-id').value;
-    const amount = parseFloat(document.getElementById('amount').value);
-    if (!users[id]) users[id] = { balance: 0, stocks: {} };
-    users[id].balance += amount;
-    alert(`${id}의 잔액이 ${amount}서창 충전됨!`);
-  }
-
-  function drawChart() {
-    const ctx = document.getElementById('stock-chart').getContext('2d');
-    const labels = Array.from({ length: stocks['당근유성'].history.length }, (_, i) => `${i+1}일차`);
-    const datasets = Object.keys(stocks).map(name => ({
-      label: name,
-      data: stocks[name].history,
-      fill: false,
-      borderColor: '#' + Math.floor(Math.random()*16777215).toString(16),
-    }));
-    new Chart(ctx, {
-      type: 'line',
-      data: { labels, datasets },
+  // 회사별 초기 가격 및 history 생성
+  function initStocks(){
+    companies.forEach(c => {
+      stocks[c] = { price: 100, history: [100], volume: 0 };
     });
   }
-</script>
-</body>
-</html>
+  initStocks();
+
+  // 로그인 처리
+  function login(){
+    const id = document.getElementById('userIdInput').value.trim();
+    if(!users[id]){
+      alert('존재하지 않는 사용자입니다.');
+      return;
+    }
+    currentUserId = id;
+    document.getElementById('loginSection').style.display = 'none';
+    document.getElementById('mainSection').style.display = 'block';
+    updateBalance();
+    updateStockTable();
+    updateMyStockTable();
+    updateChart();
+    if(users[id].role === 'admin'){
+      document.getElementById('adminSection').style.display = 'block';
+      updateRemoveCompanyOptions();
+      updateLoanRequestsTable();
+    }
+  }
+
+  function logout(){
+    currentUserId = null;
+    document.getElementById('loginSection').style.display = 'block';
+    document.getElementById('mainSection').style.display = 'none';
+    document.getElementById('adminSection').style.display = 'none';
+    document.getElementById('userIdInput').value = '';
+  }
+
+  // 잔액 표시 업데이트
+  function updateBalance(){
+    document.getElementById('balanceDisplay').textContent = users[currentUserId].balance.toLocaleString();
+  }
+
+  // 주식 테이블 업데이트
+  function updateStockTable(){
+    const tbody = document.querySelector('#stockTable tbody');
+    tbody.innerHTML = '';
+    companies.forEach(company => {
+      const tr = document.createElement('tr');
+      const { price, volume } = stocks[company];
+      tr.innerHTML = `
+        <td>${company}</td>
+        <td>${price.toLocaleString()}</td>
+        <td>${volume.toLocaleString()}</td>
+        <td><button onclick="buyStock('${company}')">매수</button></td>
+        <td><button onclick="sellStock('${company}')">매도</button></td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  // 내 주식 현황 업데이트
+  function updateMyStockTable(){
+    const tbody = document.querySelector('#myStockTable tbody');
+    tbody.innerHTML = '';
+    const userStocks = users[currentUserId].stocks;
+    companies.forEach(company => {
+      const qty = userStocks[company] || 0;
+      if(qty > 0){
+        const price = stocks[company].price;
+        const value = qty * price;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${company}</td>
+          <td>${qty.toLocaleString()}</td>
+          <td>${value.toLocaleString()}</td>
+        `;
+        tbody.appendChild(tr);
+      }
+    });
+  }
+
+  // 매수 함수
+  function buyStock(company){
+    const user = users[currentUserId];
+    const price = stocks[company].price;
+    const qty = parseInt(prompt(`${company} 주식을 몇 서창어치 매수할까요? (현재가: ${price} 서창)`, '0'));
+    if(isNaN(qty) || qty <= 0){
+      alert('올바른 수량을 입력하세요.');
+      return;
+    }
+    const cost = qty * price;
+    if(user.balance < cost){
+      alert('잔액이 부족합니다.');
+      return;
+    }
+    user.balance -= cost;
+    user.stocks[company] = (user.stocks[company] || 0) + qty;
+    stocks[company].volume += qty;
+    updateBalance();
+    updateStockTable();
+    updateMyStockTable();
+    alert(`${company} 주식 ${qty}주를 매수했습니다.`);
+  }
+
+  // 매도 함수
+  function sellStock(company){
+    const user = users[currentUserId];
+    const ownedQty = user.stocks[company] || 0;
+    if(ownedQty === 0){
+      alert('보유 주식이 없습니다.');
+      return;
+    }
+    const qty = parseInt(prompt(`${company} 주식을 몇 주 매도할까요? (보유: ${ownedQty}주)`, '0'));
+    if(isNaN(qty) || qty <= 0 || qty > ownedQty){
+      alert('올바른 수량을 입력하세요.');
+      return;
+    }
+    const price = stocks[company].price;
+    const gain = qty * price;
+    user.stocks[company] -= qty;
+    if(user.stocks[company] === 0){
+      delete user.stocks[company];
+    }
+    user.balance += gain;
+    stocks[company].volume += qty;
+    updateBalance();
+    updateStockTable();
+    updateMyStockTable();
+    alert(`${company} 주식 ${qty}주를 매도하여 ${gain.toLocaleString()} 서창이 잔액에 추가되었습니다.`);
+  }
+
+  // 주가 10분마다 랜덤 변동 (시뮬레이션용)
+  function fluctuatePrices(){
+    companies.forEach(company => {
+      let lastPrice = stocks[company].price;
+      // -5% ~ +5% 변동
+      const changePercent = (Math.random() * 10 - 5) / 100;
+      let newPrice = Math.max(1, Math.round(lastPrice * (1 + changePercent)));
+      stocks[company].price = newPrice;
+      stocks[company].history.push(newPrice);
+      if(stocks[company].history.length > 30) stocks[company].history.shift(); // 최근 30개만 유지
+    });
+    updateStockTable();
+    updateMyStockTable();
+    updateChart();
+  }
+
+  // 10분마다 변동 (테스트용 10초로 해놨어 실제는 600000)
+  setInterval(fluctuatePrices, 600000);
+  // 테스트 빠른 변동용 (10초)
+  //setInterval(fluctuatePrices, 10000);
+
+  // 차트 업데이트
+  function updateChart(){
+    const ctx = document.getElementById('priceChart').getContext('2d');
+    if(priceChart) priceChart.destroy();
+    const datasets = companies.map((company, i) => ({
+      label: company,
+      data: stocks[company].history,
+      borderColor: `hsl(${(i * 60) % 360}, 70%, 50%)`,
+      fill: false,
+      tension: 0.3
+    }));
+    priceChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: stocks[companies[0]] ? stocks[companies[0]].history.map((_,i) => i+1) : [],
+        datasets: datasets
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { position: 'bottom' } },
+        scales: {
+          y: { beginAtZero: false }
+        }
+      }
+    });
+  }
+
+  // 관리자 회사 추가
+  function addCompany(){
+    const newName = document.getElementById('newCompanyName').value.trim();
+    if(newName === ''){
+      alert('회사명을 입력하세요.');
+      return;
+    }
+    if(companies.includes(newName)){
+      alert('이미 상장된 회사입니다.');
+      return;
+    }
+    companies.push(newName);
+    stocks[newName] = { price: 100, history: [100], volume: 0 };
+    document.getElementById('newCompanyName').value = '';
+    updateStockTable();
+    updateMyStockTable();
+    updateRemoveCompanyOptions();
+    updateChart();
+    alert(`${newName} 회사가 상장되었습니다!`);
+  }
+
+  // 관리자 회사 폐지
+  function removeCompany(){
+    const select = document.getElementById('removeCompanySelect');
+    const companyToRemove = select.value;
+    if(!companyToRemove){
+      alert('폐지할 회사를 선택하세요.');
+      return;
+    }
+    if(!companies.includes(companyToRemove)){
+      alert('회사를 찾을 수 없습니다.');
+      return;
+    }
+    companies = companies.filter(c => c !== companyToRemove);
+    delete stocks[companyToRemove];
+    for(const userId in users){
+      if(users[userId].stocks[companyToRemove]){
+        delete users[userId].stocks[companyToRemove];
+      }
+    }
+    updateStockTable();
+    updateMyStockTable();
+    updateRemoveCompanyOptions();
+    updateChart();
+    alert(`${companyToRemove} 회사가 폐지되었습니다!`);
+  }
+
+  function updateRemoveCompanyOptions(){
+    const select = document.getElementById('removeCompanySelect');
+    select.innerHTML = '';
+    companies.forEach(c => {
+      const option = document.createElement('option');
+      option.value = c;
+      option.textContent = c;
+      select.appendChild(option);
+    });
+  }
+
+  // 대출 신청
+  function requestLoan(){
+    const amount = parseInt(document.getElementById('loanAmountInput').value);
+    if(isNaN(amount) || amount <= 0){
+      alert('올바른 대출 금액을 입력하세요.');
+      return;
+    }
+    if(users[currentUserId].role === 'admin'){
+      alert('관리자는 대출 신청할 수 없습니다.');
+      return;
+    }
+    if(!users[currentUserId].loanRequest){
+      users[currentUserId].loanRequest = [];
+    }
+    users[currentUserId].loanRequest.push({ amount, status: '대기중' });
+    document.getElementById('loanAmountInput').value = '';
+    alert(`${amount} 서창 대출 신청이 접수되었습니다.\n관리자 승인을 기다려 주세요.`);
+    updateLoanRequestsTable();
+  }
+
+  // 관리자 대출 승인 목록 갱신
+  function updateLoanRequestsTable(){
+    const tbody = document.querySelector('#loanRequestsTable tbody');
+    tbody.innerHTML = '';
+    for(const userId in users){
+      const user = users[userId];
+      if(user.loanRequest && user.loanRequest.length){
+        user.loanRequest.forEach((req, idx) => {
+          const tr = document.createElement('tr');
+          const btnApprove = (users[currentUserId].role === 'admin' && req.status === '대기중') ?
+            `<button onclick="approveLoan('${userId}',${idx})">승인</button>` : '';
+          tr.innerHTML = `
+            <td>${userId}</td>
+            <td>${req.amount.toLocaleString()}</td>
+            <td>${req.status}</td>
+            <td>${btnApprove}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+    }
+  }
+
+  // 관리자 대출 승인
+function approveLoan(userId, idx){
+  const user = users[userId];
+  if(!user || !user.loanRequest || !user.loanRequest[idx]) return;
+
+  if(user.loanRequest[idx].status !== '대기중') {
+    alert('이미 처리된 대출 신청입니다.');
+    return;
+  }
+
+  // 승인 처리
+  user.loanRequest[idx].status = '승인됨';
+
+  // 대출 금액을 잔액에 추가
+  user.balance += user.loanRequest[idx].amount;
+
+  alert(`${userId} 님의 대출 신청이 승인되었습니다.\n${user.loanRequest[idx].amount.toLocaleString()} 서창이 잔액에 추가되었습니다.`);
+
+  // 관리자 화면 갱신
+  updateLoanRequestsTable();
+
+  // 만약 현재 로그인한 사람이 대출 신청자라면 잔액도 갱신
+  if(currentUserId === userId){
+    updateBalance();
+  }
+}
+
