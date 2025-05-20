@@ -310,7 +310,7 @@ function init(){
     companies[name].history.push(companies[name].price);
   }
   // 주가 자동 업데이트 10분마다 (테스트용 10초)
-  setInterval(updateStockPrices, 10000);
+  setInterval(updateStockPrices, 600000);
 }
 
 init();
