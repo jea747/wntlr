@@ -1,279 +1,57 @@
-// ====== 유저 정보 ======
-const users = {
-  "wjdwogus": { role: "admin", balance: 100000, stocks: {}, loan: 0 },
-  "1": { role: "user", balance: 10000, stocks: {}, loan: 0 },
-  "2": { role: "user", balance: 10000, stocks: {}, loan: 0 },
-  "3": { role: "user", balance: 10000, stocks: {}, loan: 0 },
-  "4": { role: "user", balance: 10000, stocks: {}, loan: 0 },
-  "5": { role: "user", balance: 10000, stocks: {}, loan: 0 },
-  "6": { role: "user", balance: 10000, stocks: {}, loan: 0 },
-  "7": { role: "user", balance: 10000, stocks: {}, loan: 0 },
-  "8": { role: "user", balance: 10000, stocks: {}, loan: 0 },
-  "9": { role: "user", balance: 10000, stocks: {}, loan: 0 },
-  "10": { role: "user", balance: 10000, stocks: {}, loan: 0 },
-  "11": { role: "user", balance: 10000, stocks: {}, loan: 0 },
-  "12": { role: "user", balance: 10000, stocks: {}, loan: 0 },
-  "13": { role: "user", balance: 10000, stocks: {}, loan: 0 },
-  "14": { role: "user", balance: 10000, stocks: {}, loan: 0 },
-  "15": { role: "user", balance: 10000, stocks: {}, loan: 0 },
-  "16": { role: "user", balance: 10000, stocks: {}, loan: 0 },
-  "17": { role: "user", balance: 10000, stocks: {}, loan: 0 },
-  "18": { role: "user", balance: 10000, stocks: {}, loan: 0 },
-  "19": { role: "user", balance: 10000, stocks: {}, loan: 0 },
-  "21": { role: "user", balance: 10000, stocks: {}, loan: 0 },
-  "22": { role: "user", balance: 10000, stocks: {}, loan: 0 },
-  "23": { role: "user", balance: 10000, stocks: {}, loan: 0 },
-};
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>트러플 주식 시뮬</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div id="login-section" class="centered">
+    <h2>로그인</h2>
+    <input type="text" id="userid" placeholder="아이디 (user1 ~ user23, wjdwogus)" />
+    <input type="password" id="password" placeholder="비밀번호" />
+    <button id="login-btn">로그인</button>
+    <p id="login-msg" class="error"></p>
+  </div>
 
-// ====== 회사 & 주식 정보 ======
-const companies = {
-  "당근유성": { price: getRandomInt(10, 20), history: [], available: true },
-  "트러플마켓": { price: getRandomInt(10, 20), history: [], available: true },
-  "서준머니": { price: getRandomInt(10, 20), history: [], available: true },
-  "트러플아지매": { price: getRandomInt(10, 20), history: [], available: true },
-  "샘숭전자": { price: getRandomInt(10, 20), history: [], available: true },
-  "아뽀": { price: getRandomInt(10, 20), history: [], available: true }
-};
+  <div id="main-section" style="display:none; width:100%; max-width:600px;">
+    <header>
+      <h2 id="welcome-msg"></h2>
+      <button id="logout-btn">로그아웃</button>
+    </header>
 
-// 랜덤 정수 함수 (최소 이상, 최대 이하)
-function getRandomInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
+    <div id="admin-section" style="display:none;">
+      <h3>관리자 메뉴</h3>
+      <div>
+        <input type="text" id="add-seed-userid" placeholder="유저 아이디 입력" />
+        <input type="number" id="add-seed-amount" placeholder="추가할 시드머니" />
+        <button id="add-seed-btn">시드머니 추가</button>
+      </div>
+      <h4>대출 승인 요청 목록</h4>
+      <div id="admin-loan-requests"></div>
+    </div>
 
-// 현재 로그인한 유저 정보 저장용
-let currentUser = null;
+    <div id="user-section">
+      <p class="balance-section">잔액: <span id="balance">0</span> 서창</p>
 
-// DOM 요소들
-const loginSection = document.getElementById("loginSection");
-const mainSection = document.getElementById("mainSection");
-const useridInput = document.getElementById("userid");
-const passwordInput = document.getElementById("password");
-const loginBtn = document.getElementById("loginBtn");
-const errorMsg = document.getElementById("errorMsg");
-const usernameDisplay = document.getElementById("usernameDisplay");
-const balanceDisplay = document.getElementById("balance");
-const stockList = document.getElementById("stockList");
-const userStockList = document.getElementById("userStockList");
-const newsList = document.getElementById("newsList");
-const adminSection = document.getElementById("adminSection");
+      <h3>주식 회사 목록</h3>
+      <div id="companies-list"></div>
 
-// 로그인 함수
-loginBtn.addEventListener("click", () => {
-  const id = useridInput.value.trim();
-  const pw = passwordInput.value.trim();
+      <h3>보유 주식</h3>
+      <ul id="stocks-list"></ul>
 
-  if (!id || !pw) {
-    errorMsg.textContent = "아이디와 비밀번호를 입력하세요.";
-    return;
-  }
+      <h3>대출 신청</h3>
+      <input type="number" id="loan-amount" placeholder="대출 금액 입력" />
+      <button id="loan-apply-btn">대출 신청</button>
+      <pre id="loan-msg"></pre>
 
-  if (!(id in users)) {
-    errorMsg.textContent = "존재하지 않는 아이디입니다.";
-    return;
-  }
+      <h3>주가 변동 그래프</h3>
+      <canvas id="price-chart" width="600" height="300"></canvas>
+    </div>
+  </div>
 
-  // 비밀번호 = 아이디 동일 조건
-  if (id !== pw) {
-    errorMsg.textContent = "비밀번호가 틀렸습니다.";
-    return;
-  }
-
-  // 로그인 성공
-  currentUser = users[id];
-  currentUser.id = id;
-
-  loginSection.style.display = "none";
-  mainSection.style.display = "block";
-  errorMsg.textContent = "";
-  usernameDisplay.textContent = id;
-
-  updateUI();
-});
-
-// UI 업데이트 함수
-function updateUI() {
-  // 잔액 표시
-  balanceDisplay.textContent = `잔액: ${currentUser.balance.toLocaleString()} 서창`;
-
-  // 주식 리스트 초기화
-  stockList.innerHTML = "";
-  for (const companyName in companies) {
-    const company = companies[companyName];
-    if (!company.available) continue; // 상장폐지된 회사는 리스트에서 제외
-
-    const tr = document.createElement("tr");
-
-    const nameTd = document.createElement("td");
-    nameTd.textContent = companyName;
-    tr.appendChild(nameTd);
-
-    const priceTd = document.createElement("td");
-    priceTd.textContent = company.price.toLocaleString();
-    tr.appendChild(priceTd);
-
-    // 매수 버튼
-    const buyTd = document.createElement("td");
-    const buyBtn = document.createElement("button");
-    buyBtn.textContent = "매수";
-    buyBtn.onclick = () => buyStock(companyName);
-    buyTd.appendChild(buyBtn);
-    tr.appendChild(buyTd);
-
-    // 매도 버튼
-    const sellTd = document.createElement("td");
-    const sellBtn = document.createElement("button");
-    sellBtn.textContent = "매도";
-    sellBtn.onclick = () => sellStock(companyName);
-    sellTd.appendChild(sellBtn);
-    tr.appendChild(sellTd);
-
-    // 관리자용 상장폐지 버튼 (관리자일때만 보임)
-    const delistTd = document.createElement("td");
-    if (currentUser.role === "admin") {
-      const delistBtn = document.createElement("button");
-      delistBtn.textContent = company.available ? "상장폐지" : "복원";
-      delistBtn.style.backgroundColor = company.available ? "#d9534f" : "#5cb85c";
-      delistBtn.style.color = "white";
-      delistBtn.onclick = () => toggleListing(companyName);
-      delistTd.appendChild(delistBtn);
-    }
-    tr.appendChild(delistTd);
-
-    stockList.appendChild(tr);
-  }
-
-  // 내 주식 현황 표시
-  userStockList.innerHTML = "";
-  const stocks = currentUser.stocks;
-  if (Object.keys(stocks).length === 0) {
-    const li = document.createElement("li");
-    li.textContent = "보유 주식이 없습니다.";
-    userStockList.appendChild(li);
-  } else {
-    for (const companyName in stocks) {
-      const count = stocks[companyName];
-      if (count > 0) {
-        const li = document.createElement("li");
-        li.textContent = `${companyName}: ${count}주`;
-        userStockList.appendChild(li);
-      }
-    }
-  }
-
-  // 뉴스 업데이트 (예시)
-  updateNews();
-
-  // 관리자 섹션 표시 여부
-  adminSection.style.display = currentUser.role === "admin" ? "block" : "none";
-}
-
-// 주식 매수 함수
-function buyStock(companyName) {
-  const company = companies[companyName];
-  if (!company.available) {
-    alert("이 회사는 상장폐지 상태입니다.");
-    return;
-  }
-
-  let quantity = prompt(`몇 주를 매수하시겠습니까? (현재가: ${company.price} 서창)`);
-  if (quantity === null) return; // 취소
-  quantity = parseInt(quantity);
-  if (isNaN(quantity) || quantity <= 0) {
-    alert("유효한 수량을 입력해주세요.");
-    return;
-  }
-
-  const cost = company.price * quantity;
-  if (currentUser.balance < cost) {
-    alert("잔액이 부족합니다.");
-    return;
-  }
-
-  // 구매 실행
-  currentUser.balance -= cost;
-  currentUser.stocks[companyName] = (currentUser.stocks[companyName] || 0) + quantity;
-
-  alert(`${companyName} ${quantity}주 매수 완료!`);
-
-  updateUI();
-}
-
-// 주식 매도 함수
-function sellStock(companyName) {
-  const company = companies[companyName];
-  const owned = currentUser.stocks[companyName] || 0;
-  if (owned === 0) {
-    alert("보유한 주식이 없습니다.");
-    return;
-  }
-
-  let quantity = prompt(`몇 주를 매도하시겠습니까? (보유 주식: ${owned}주)`);
-  if (quantity === null) return; // 취소
-  quantity = parseInt(quantity);
-  if (isNaN(quantity) || quantity <= 0 || quantity > owned) {
-    alert("유효한 수량을 입력해주세요.");
-    return;
-  }
-
-  // 매도 실행
-  currentUser.stocks[companyName] -= quantity;
-  const revenue = company.price * quantity;
-  currentUser.balance += revenue;
-
-  alert(`${companyName} ${quantity}주 매도 완료!`);
-
-  updateUI();
-}
-
-// 상장폐지 / 복원 토글 (관리자용)
-function toggleListing(companyName) {
-  const company = companies[companyName];
-  company.available = !company.available;
-
-  alert(`${companyName}의 상장 상태가 변경되었습니다.`);
-
-  updateUI();
-}
-
-// 뉴스 예시 업데이트 함수
-function updateNews() {
-  const newsSamples = [
-    "당근유성, 신제품 출시 임박!",
-    "트러플마켓, 사용자 수 1만명 돌파",
-    "서준머니, 올해 매출 급증 전망",
-    "샘숭전자, 반도체 공급 이슈 완화",
-    "아뽀, 혁신적인 AI 기술 발표"
-  ];
-
-  newsList.innerHTML = "";
-  newsSamples.forEach(news => {
-    const li = document.createElement("li");
-    li.textContent = news;
-    newsList.appendChild(li);
-  });
-}
-
-// 주가 변동 시뮬레이션 함수 (10초마다)
-function simulateStockPriceChange() {
-  for (const companyName in companies) {
-    const company = companies[companyName];
-    if (!company.available) continue;
-
-    // +-5% 랜덤 변동
-    const changePercent = (Math.random() * 10) - 5;
-    const newPrice = Math.max(1, Math.round(company.price * (1 + changePercent / 100)));
-    company.price = newPrice;
-
-    // 히스토리 기록 (최대 30개)
-    company.history.push(newPrice);
-    if (company.history.length > 30) company.history.shift();
-  }
-
-  updateUI();
-}
-
-// 초기 UI 업데이트
-updateUI();
-
-// 주가 변동 주기 실행 (10초마다)
-setInterval(simulateStockPriceChange, 600000);
+  <script src="app.js"></script>
+</body>
+</html>
