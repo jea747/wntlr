@@ -1,0 +1,43 @@
+body {
+  font-family: '맑은 고딕', sans-serif;
+  background: #fffbe6;
+  color: #333;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+}
+h1 {
+  color: #8b5e3c;
+  text-align: center;
+}
+input, button {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  font-size: 1.1em;
+  box-sizing: border-box;
+}
+button {
+  background: #f4a261;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+button:hover {
+  background: #e76f51;
+}
+#loginMsg {
+  color: red;
+  height: 20px;
+  text-align: center;
+}
+#stock-info > div {
+  background: #fff3cd;
+  border: 1px solid #ffeeba;
+  margin: 6px 0;
+  padding: 10px;
+  border-radius: 5px;
+  font-weight: bold;
+}
