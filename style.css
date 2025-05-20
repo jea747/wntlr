@@ -1,68 +1,139 @@
+/* 전체 폰트, 배경 */
 body {
-  background: #fff8dc; /* 연한 바나나 우유색 */
-  font-family: 'Arial', sans-serif;
-  margin: 0; padding: 20px;
+  font-family: 'Nanum Gothic', sans-serif;
+  background: #fff8dc; /* 바나나밀크 느낌 */
   color: #333;
+  margin: 0;
+  padding: 20px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.container {
-  max-width: 900px;
+/* 로그인, 메인 영역 가운데 정렬 */
+.centered {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 350px;
+  width: 90%;
   margin: auto;
-  background: #fff;
+  padding: 30px;
   border-radius: 12px;
-  padding: 20px 30px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  background: #fff;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
 }
 
 h1, h2, h3 {
-  text-align: center;
-  color: #c06c84;
+  margin-bottom: 20px;
+  color: #704214; /* 따뜻한 갈색톤 */
 }
 
-input, button {
-  font-size: 1rem;
-  padding: 8px 12px;
-  margin: 5px;
-  border-radius: 6px;
-  border: 1.5px solid #c06c84;
+input[type="text"], input[type="password"] {
+  width: 100%;
+  padding: 12px 15px;
+  margin: 8px 0;
+  box-sizing: border-box;
+  border: 2px solid #d2b48c;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+}
+
+input[type="text"]:focus, input[type="password"]:focus {
+  border-color: #c2996b;
+  outline: none;
 }
 
 button {
-  background: #f67280;
-  color: white;
   cursor: pointer;
-  transition: background 0.3s;
+  background: #c2996b;
+  border: none;
+  color: white;
+  padding: 12px 25px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 12px;
+  transition: background 0.3s ease;
 }
 
 button:hover {
-  background: #c06c84;
+  background: #a87d4d;
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
+.error {
+  color: red;
+  font-weight: 600;
   margin-top: 10px;
 }
 
+/* 테이블 디자인 */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+  margin-bottom: 25px;
+}
+
 th, td {
-  border: 1px solid #ddd;
-  padding: 10px;
+  padding: 12px 10px;
   text-align: center;
+  border-bottom: 1px solid #d2b48c;
 }
 
 th {
-  background: #f8b195;
-  color: white;
+  background-color: #f3e1b0;
+  color: #704214;
+  font-weight: 700;
 }
 
-#portfolio-list, #loan-requests-list, #company-list {
+/* 잔액 영역 */
+.balance-section {
+  margin-bottom: 20px;
+  font-size: 1.2em;
+  color: #5a3e1b;
+}
+
+/* 내 주식 리스트 */
+#userStockList {
   list-style-type: none;
   padding-left: 0;
-  max-height: 150px;
-  overflow-y: auto;
 }
 
-#portfolio-list li, #loan-requests-list li, #company-list li {
-  border-bottom: 1px solid #ddd;
-  padding: 6px 0;
+#userStockList li {
+  background: #fff4e1;
+  margin-bottom: 6px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #d2b48c;
+  color: #6b4e1b;
 }
+
+/* 뉴스 리스트 */
+#newsList {
+  list-style-type: disc;
+  padding-left: 20px;
+  margin-bottom: 20px;
+  color: #5a3e1b;
+}
+
+/* 헤더 */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f3e1b0;
+  padding: 10px 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  box-shadow: 0 3px 6px #c9b37888;
+}
+
+header h2 {
+  margin: 0;
+  font-weight: 700;
+  font-size: 1.3em;
+}
+
