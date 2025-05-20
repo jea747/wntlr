@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>트러플 증권소</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <h1>트러플 증권소</h1>
+
+  <div id="loginSection">
+    <h3>로그인</h3>
+    <input type="text" id="userIdInput" placeholder="아이디 (예: user1 ~ user23, 관리자: wjdwogus)" />
+    <input type="password" id="userPwInput" placeholder="비밀번호 (일반: 1234)" />
+    <button onclick="login()">로그인</button>
+    <p class="error" id="loginError"></p>
+  </div>
+
+  <div id="mainSection" style="display:none;">
+    <h3>잔액: <span id="balanceDisplay">0</span> 서창</h3>
+
+    <section>
+      <h4>주식 목록</h4>
+      <table id="stockTable">
+        <thead>
+          <tr><th>회사명</th><th>현재가</th><th>매수</th><th>매도</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <section>
+      <h4>내 주식</h4>
+      <ul id="myStockList"></ul>
+    </section>
+
+    <section>
+      <h4>주가 그래프</h4>
+      <canvas id="priceChart" width="600" height="300"></canvas>
+    </section>
+
+    <section id="loanSection">
+      <h4>대출 신청</h4>
+      <input type="number" id="loanAmountInput" placeholder="대출 금액" />
+      <button onclick="requestLoan()">대출 신청</button>
+      <p id="loanStatus"></p>
+    </section>
+
+    <section id="adminSection" style="display:none;">
+      <h3>관리자 메뉴</h3>
+      <input type="text" id="newCompanyInput" placeholder="회사명" />
+      <button onclick="addCompany()">상장</button>
+      <select id="removeCompanySelect"></select>
+      <button onclick="removeCompany()">폐지</button>
+      <h4>대출 승인</h4>
+      <ul id="loanApprovalList"></ul>
+    </section>
+
+    <button onclick="logout()">로그아웃</button>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
