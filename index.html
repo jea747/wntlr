@@ -3,54 +3,69 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>트러플 주식 시뮬</title>
-  <link rel="stylesheet" href="style.css" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <title>트러플마켓 로그인</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #fff8dc; /* 바나나우유 느낌 */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    #loginSection {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      padding: 30px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      width: 320px;
+    }
+    input {
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+    input:focus {
+      border-color: #ffa726;
+    }
+    button {
+      background: #ffd966;
+      border: none;
+      padding: 12px;
+      font-size: 18px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background: #ffca28;
+    }
+    #mainSection {
+      display: none;
+      padding: 20px;
+    }
+  </style>
 </head>
 <body>
-  <div id="login-section" class="centered">
-    <h2>로그인</h2>
-    <input type="text" id="userid" placeholder="아이디 (user1 ~ user23, wjdwogus)" />
-    <input type="password" id="password" placeholder="비밀번호" />
-    <button id="login-btn">로그인</button>
-    <p id="login-msg" class="error"></p>
-  </div>
+  <section id="loginSection">
+    <h2>트러플마켓 로그인</h2>
+    <input type="text" id="loginId" placeholder="아이디 (1~23 또는 관리자)" />
+    <input type="password" id="loginPw" placeholder="비밀번호" />
+    <button onclick="login()">로그인</button>
+  </section>
 
-  <div id="main-section" style="display:none; width:100%; max-width:600px;">
-    <header>
-      <h2 id="welcome-msg"></h2>
-      <button id="logout-btn">로그아웃</button>
-    </header>
-
-    <div id="admin-section" style="display:none;">
-      <h3>관리자 메뉴</h3>
-      <div>
-        <input type="text" id="add-seed-userid" placeholder="유저 아이디 입력" />
-        <input type="number" id="add-seed-amount" placeholder="추가할 시드머니" />
-        <button id="add-seed-btn">시드머니 추가</button>
-      </div>
-      <h4>대출 승인 요청 목록</h4>
-      <div id="admin-loan-requests"></div>
-    </div>
-
-    <div id="user-section">
-      <p class="balance-section">잔액: <span id="balance">0</span> 서창</p>
-
-      <h3>주식 회사 목록</h3>
-      <div id="companies-list"></div>
-
-      <h3>보유 주식</h3>
-      <ul id="stocks-list"></ul>
-
-      <h3>대출 신청</h3>
-      <input type="number" id="loan-amount" placeholder="대출 금액 입력" />
-      <button id="loan-apply-btn">대출 신청</button>
-      <pre id="loan-msg"></pre>
-
-      <h3>주가 변동 그래프</h3>
-      <canvas id="price-chart" width="600" height="300"></canvas>
-    </div>
-  </div>
+  <section id="mainSection">
+    <h2>메인 페이지</h2>
+    <p>로그인 성공! 기능 구현 중...</p>
+    <button onclick="logout()">로그아웃</button>
+  </section>
 
   <script src="app.js"></script>
 </body>
