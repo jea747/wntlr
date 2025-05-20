@@ -30,7 +30,7 @@ h1, h2, h3 {
   color: #704214; /* 따뜻한 갈색톤 */
 }
 
-input[type="text"], input[type="password"] {
+input[type="text"], input[type="password"], input[type="number"] {
   width: 100%;
   padding: 12px 15px;
   margin: 8px 0;
@@ -41,7 +41,7 @@ input[type="text"], input[type="password"] {
   transition: border-color 0.3s ease;
 }
 
-input[type="text"]:focus, input[type="password"]:focus {
+input[type="text"]:focus, input[type="password"]:focus, input[type="number"]:focus {
   border-color: #c2996b;
   outline: none;
 }
@@ -69,26 +69,6 @@ button:hover {
   margin-top: 10px;
 }
 
-/* 테이블 디자인 */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 12px;
-  margin-bottom: 25px;
-}
-
-th, td {
-  padding: 12px 10px;
-  text-align: center;
-  border-bottom: 1px solid #d2b48c;
-}
-
-th {
-  background-color: #f3e1b0;
-  color: #704214;
-  font-weight: 700;
-}
-
 /* 잔액 영역 */
 .balance-section {
   margin-bottom: 20px;
@@ -96,13 +76,13 @@ th {
   color: #5a3e1b;
 }
 
-/* 내 주식 리스트 */
-#userStockList {
+/* 보유 주식 리스트 */
+#stocks-list {
   list-style-type: none;
   padding-left: 0;
 }
 
-#userStockList li {
+#stocks-list li {
   background: #fff4e1;
   margin-bottom: 6px;
   padding: 8px 12px;
@@ -111,12 +91,18 @@ th {
   color: #6b4e1b;
 }
 
-/* 뉴스 리스트 */
-#newsList {
-  list-style-type: disc;
-  padding-left: 20px;
-  margin-bottom: 20px;
-  color: #5a3e1b;
+/* 회사 리스트 스타일 */
+#companies-list > div {
+  border: 1px solid #ddd;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  background: #fff9e7;
+}
+
+#companies-list h4 {
+  margin: 0 0 10px 0;
+  color: #704214;
 }
 
 /* 헤더 */
@@ -136,4 +122,3 @@ header h2 {
   font-weight: 700;
   font-size: 1.3em;
 }
-
