@@ -2,19 +2,19 @@ body {
   font-family: '맑은 고딕', sans-serif;
   background: #fffbe6;
   color: #333;
-  max-width: 600px;
+  max-width: 700px;
   margin: 0 auto;
   padding: 20px;
 }
-h1 {
+h1, h3, h4 {
   color: #8b5e3c;
   text-align: center;
 }
-input, button {
+input, select, button {
   width: 100%;
   padding: 10px;
-  margin: 8px 0;
-  font-size: 1.1em;
+  margin: 6px 0;
+  font-size: 1em;
   box-sizing: border-box;
 }
 button {
@@ -28,16 +28,22 @@ button {
 button:hover {
   background: #e76f51;
 }
-#loginMsg {
+#loginMsg, #trade-msg, #loan-msg {
   color: red;
   height: 20px;
   text-align: center;
 }
-#stock-info > div {
+#stock-info > div, #portfolio-info > div, #loan-requests > div, #listed-companies > div {
   background: #fff3cd;
   border: 1px solid #ffeeba;
   margin: 6px 0;
   padding: 10px;
   border-radius: 5px;
   font-weight: bold;
+}
+canvas {
+  display: block;
+  margin: 20px auto;
+  border: 1px solid #ddd;
+  background: white;
 }
