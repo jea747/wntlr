@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>트러플 증권소</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: 'Arial';
+      background-color: #fffbe6;
+      padding: 20px;
+    }
+    .hidden { display: none; }
+    .btn { padding: 8px 16px; background-color: #ffde59; border: none; border-radius: 8px; cursor: pointer; margin: 5px; }
+    .btn:hover { background-color: #ffd633; }
+  </style>
+</head>
+<body>
+  <h1>📈 트러플 증권소</h1>
+
+  <!-- 로그인 화면 -->
+  <div id="login-screen">
+    <input type="text" id="login-id" placeholder="ID 입력">
+    <input type="password" id="login-password" placeholder="비밀번호 (관리자만)">
+    <button class="btn" onclick="login()">로그인</button>
+  </div>
+
+  <!-- 사용자 화면 -->
+  <div id="user-screen" class="hidden">
+    <h2>환영합니다, <span id="username"></span>님!</h2>
+    <p>💰 잔액: <span id="balance">0</span>서창</p>
+
+    <div>
+      <h3>📦 주식 매수/매도</h3>
+      <select id="stock-select"></select>
+      <input type="number" id="stock-amount" placeholder="수량">
+      <button class="btn" onclick="buyStock()">매수</button>
+      <button class="btn" onclick="sellStock()">매도</button>
+    </div>
+
+    <div>
+      <h3>📊 내 주식 현황</h3>
+      <ul id="my-stocks"></ul>
+    </div>
+
+    <div>
+      <h3>📈 주가 그래프</h3>
+      <canvas id="stock-chart"></canvas>
+    </div>
+  </div>
+
+  <!-- 관리자 화면 -->
+  <div id="admin-screen" class="hidden">
+    <h2>🔐 관리자 모드</h2>
+    <input type="text" id="user-id" placeholder="유저 ID">
+    <input type="number" id="amount" placeholder="충전할 서창">
+    <button class="btn" onclick="chargeBalance()">서창 충전</button>
+  </div>
+
+<script>
+  const stocks = {
+    '당근유성': { price: 12, history: [12] },
+    '트러플마켓': { price: 8, history: [8] },
+    '서준머니': { price: 9.5, history: [9.5] },
+    '트러플아지매': { price: 5, history: [5] },
+    '샘숭전자': { price: 13, history: [13] },
+    '아뽀': { price: 7, history: [7] },
+  };
+
+  const users = {
+    '5118': { balance: 0, stocks: {} }
+  };
+
+  let currentUser = null;
+
+  function login() {
+    const id = document.getElementById('login-id').value;
+    const pw = document.getElementById('login-password').value;
+
+    if (id === 'wjdwogus' && pw === 'wjdwogus') {
+      document.getElementById('login-screen').classList.add('hidden');
+      document.getElementById('admin-screen').classList.remove('hidden');
+      currentUser = 'ADMIN';
+    } else {
+      if (!users[id]) users[id] = { balance: 0, stocks: {} };
+      currentUser = id;
+      document.getElementById('username').innerText = id;
+      document.getElementById('login-screen').classList.add('hidden');
+      document.getElementById('user-screen').classList.remove('hidden');
+      updateUI();
+    }
+  }
+
+  function updateUI() {
+    document.getElementById('balance').innerText = users[currentUser].balance.toFixed(1);
+    const select = document.getElementById('stock-select');
+    select.innerHTML = '';
+    for (let name in stocks) {
+      select.innerHTML += `<option value="${name}">${name} (${stocks[name].price}서창)</option>`;
+    }
+    const ul = document.getElementById('my-stocks');
+    ul.innerHTML = '';
+    const my = users[currentUser].stocks;
+    for (let s in stocks) {
+      const count = my[s] || 0;
+      if (count > 0) {
+        ul.innerHTML += `<li>${s}: ${count}주</li>`;
+      }
+    }
+    drawChart();
+  }
+
+  function buyStock() {
+    const name = document.getElementById('stock-select').value;
+    const qty = parseInt(document.getElementById('stock-amount').value);
+    const price = stocks[name].price;
+    const total = price * qty;
+    if (users[currentUser].balance >= total) {
+      users[currentUser].balance -= total;
+      users[currentUser].stocks[name] = (users[currentUser].stocks[name] || 0) + qty;
+      updateUI();
+    } else {
+      alert('잔액 부족!');
+    }
+  }
+
+  function sellStock() {
+    const name = document.getElementById('stock-select').value;
+    const qty = parseInt(document.getElementById('stock-amount').value);
+    const price = stocks[name].price;
+    const myQty = users[currentUser].stocks[name] || 0;
+    if (myQty >= qty) {
+      users[currentUser].stocks[name] -= qty;
+      users[currentUser].balance += price * qty;
+      updateUI();
+    } else {
+      alert('보유 주식 부족!');
+    }
+  }
+
+  function chargeBalance() {
+    const id = document.getElementById('user-id').value;
+    const amount = parseFloat(document.getElementById('amount').value);
+    if (!users[id]) users[id] = { balance: 0, stocks: {} };
+    users[id].balance += amount;
+    alert(`${id}의 잔액이 ${amount}서창 충전됨!`);
+  }
+
+  function drawChart() {
+    const ctx = document.getElementById('stock-chart').getContext('2d');
+    const labels = Array.from({ length: stocks['당근유성'].history.length }, (_, i) => `${i+1}일차`);
+    const datasets = Object.keys(stocks).map(name => ({
+      label: name,
+      data: stocks[name].history,
+      fill: false,
+      borderColor: '#' + Math.floor(Math.random()*16777215).toString(16),
+    }));
+    new Chart(ctx, {
+      type: 'line',
+      data: { labels, datasets },
+    });
+  }
+</script>
+</body>
+</html>
