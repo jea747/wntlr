@@ -17,12 +17,58 @@
   </div>
 
   <div id="app" style="display:none;">
-    <h2>주식 현황</h2>
-    <div id="stock-info"></div>
+    <div id="welcome"></div>
+
+    <div id="balance-section">
+      <h3>잔액: <span id="balance">1000</span> 서창</h3>
+    </div>
+
+    <div id="stock-section">
+      <h3>주식 현황</h3>
+      <div id="stock-info"></div>
+    </div>
+
+    <div id="portfolio-section">
+      <h3>내 보유 주식</h3>
+      <div id="portfolio-info"></div>
+    </div>
+
+    <div id="trade-section">
+      <h3>매수 / 매도</h3>
+      <select id="trade-company"></select>
+      <input type="number" id="trade-amount" placeholder="수량 입력" min="1" />
+      <button id="buyBtn">매수</button>
+      <button id="sellBtn">매도</button>
+      <p id="trade-msg"></p>
+    </div>
+
+    <div id="loan-section">
+      <h3>대출 신청</h3>
+      <input type="number" id="loan-amount" placeholder="대출 금액 입력" min="1" />
+      <button id="applyLoanBtn">대출 신청</button>
+      <p id="loan-msg"></p>
+      <h4>대출 이자: 주 5%</h4>
+    </div>
+
+    <div id="loan-requests-section" style="display:none;">
+      <h3>대출 승인 요청</h3>
+      <div id="loan-requests"></div>
+    </div>
+
+    <div id="company-management" style="display:none;">
+      <h3>회사 관리 (관리자 전용)</h3>
+      <input type="text" id="new-company-name" placeholder="새 회사 이름" />
+      <button id="add-company-btn">상장</button>
+      <h4>상장된 회사</h4>
+      <div id="listed-companies"></div>
+    </div>
 
     <button id="logoutBtn">로그아웃</button>
+
+    <canvas id="priceChart" width="600" height="300"></canvas>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
