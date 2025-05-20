@@ -8,64 +8,73 @@
 </head>
 <body>
   <div class="container">
+
     <h1>트러플 증권소</h1>
 
     <section id="login-section">
       <h2>로그인</h2>
-      <input type="text" id="userid" placeholder="아이디 입력" />
-      <input type="password" id="password" placeholder="비밀번호 입력" />
+      <input id="login-id" placeholder="아이디 입력" />
+      <input id="login-password" type="password" placeholder="비밀번호 입력" />
       <button id="login-btn">로그인</button>
-      <p id="login-msg" class="error"></p>
     </section>
 
     <section id="main-section" style="display:none;">
-      <div class="user-info">
+      <div>
         <span id="welcome-msg"></span>
         <button id="logout-btn">로그아웃</button>
       </div>
 
-      <div id="balance-info">
-        잔액: <span id="balance">0</span> 서창
-      </div>
+      <h2>잔액: <span id="balance">0</span> 서창</h2>
 
-      <section id="stocks-section">
-        <h3>상장된 회사</h3>
+      <section id="stock-section">
+        <h3>주식 매매</h3>
         <table id="stock-table">
           <thead>
-            <tr><th>회사명</th><th>현재가 (서창)</th><th>내 보유량</th><th>매수</th><th>매도</th></tr>
+            <tr>
+              <th>회사명</th>
+              <th>현재가 (서창)</th>
+              <th>보유수량</th>
+              <th>매수</th>
+              <th>매도</th>
+            </tr>
           </thead>
           <tbody></tbody>
         </table>
       </section>
 
-      <section id="loan-section">
-        <h3>대출 신청</h3>
-        <input type="number" id="loan-amount" min="1" placeholder="원하는 대출 금액" />
-        <button id="apply-loan-btn">대출 신청 (이자: 5%/주)</button>
-        <div id="loan-msg"></div>
+      <section id="portfolio-section">
+        <h3>내 주식 현황</h3>
+        <ul id="portfolio-list"></ul>
+      </section>
+
+      <section id="loan-section" style="display:none;">
+        <h3>대출 신청 (일반 사용자만 가능)</h3>
+        <input type="number" id="loan-amount" placeholder="대출 희망 금액 입력" min="1" />
+        <button id="apply-loan-btn">대출 신청</button>
+
+        <h4>대출 이자: 1주일에 5%</h4>
+        <h4>대출 신청 내역 (관리자만 표시)</h4>
+        <ul id="loan-requests-list"></ul>
       </section>
 
       <section id="admin-section" style="display:none;">
-        <h3>관리자 메뉴</h3>
+        <h3>관리자 기능</h3>
         <div>
-          <input type="text" id="new-company-name" placeholder="새 회사명" />
+          <input id="new-company-name" placeholder="새 회사명" />
           <button id="add-company-btn">상장하기</button>
         </div>
         <div>
           <h4>상장된 회사 목록</h4>
           <ul id="company-list"></ul>
         </div>
-        <div>
-          <h4>대출 신청 승인</h4>
-          <ul id="loan-requests"></ul>
-        </div>
       </section>
 
-      <section id="chart-section">
-        <h3>주가 그래프</h3>
-        <canvas id="stock-chart" width="600" height="300"></canvas>
+      <section id="stock-chart-section">
+        <h3>주가 변동 그래프</h3>
+        <canvas id="stock-chart" width="800" height="300"></canvas>
       </section>
     </section>
+
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
